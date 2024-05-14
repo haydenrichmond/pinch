@@ -15,5 +15,8 @@ namespace Elevator.Configuration
         public required int TotalElevators { get; set; }
 
         public required int DoorOpenCloseTimeMilliseconds { get; set; }
+        public required int TimeToTravelBetweenFloorsMilliseconds { get; set; }
+
+        public required int PassengerLoadUnloadTimeMilliseconds { get; set; }
     }
 }

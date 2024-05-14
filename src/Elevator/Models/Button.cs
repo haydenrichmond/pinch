@@ -1,24 +1,22 @@
+using Elevator.Events;
+
 namespace Elevator.Models
 {
     public class Button
     {
-        public bool UpButtonPressed {  get; set; }
-        public bool DownButtonPressed { get; set; }
-
-        public void PressUpButton()
+        public Button(int floorNumber)
         {
-            UpButtonPressed = true;
+            FloorNumber = floorNumber;
         }
 
-        public void PressDownButton()
-        {
-            DownButtonPressed = true;
-        }
+        public int FloorNumber { get; set; }
+        public Elevator Elevator { get; set; }
 
-        public void PassengersPickedUp()
+        public event ElevatorButtonPressedEventHandler ElevatorButtonPressed;
+
+        public void PressButton()
         {
-            UpButtonPressed = false;
-            DownButtonPressed = false;
+            ElevatorButtonPressed.Invoke(this, new ElevatorButtonPressedEventArgs(this));
         }
     }
 }

@@ -1,3 +1,5 @@
+using Elevator.Events;
+
 namespace Elevator.Models
 {
     public class Floor
@@ -7,11 +9,29 @@ namespace Elevator.Models
             FloorNumber = floorNumber;
         }
 
-        /// <summary>
-        /// 0 denotes Ground floor (G)
-        /// </summary>
+        public bool UpButtonPressed { get; set; }
+        public bool DownButtonPressed { get; set; }
+
         public int FloorNumber { get; set; }
 
-        public Button Button { get; set; }
+        public event CallButtonPressedEventHandler CallButtonPressed;
+
+        public void PressUpButton()
+        {
+            UpButtonPressed = true;
+            CallButtonPressed.Invoke(this, new CallButtonPressedEventArgs(this));
+        }
+
+        public void PressDownButton()
+        {
+            DownButtonPressed = true;
+            CallButtonPressed.Invoke(this, new CallButtonPressedEventArgs(this));
+        }
+
+        public void PassengersPickedUp()
+        {
+            UpButtonPressed = false;
+            DownButtonPressed = false;
+        }
     }
 }

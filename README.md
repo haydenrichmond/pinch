@@ -6,8 +6,6 @@ A repo for Elevator code test.
 
 # Requirements
 
-The Challenge:
-
 You are in charge of writing software for an elevator (lift) company.
 Your task is to write a program to control the travel of a lift for a 10 storey building.
 A passenger can summon the lift to go up or down from any floor, once in the lift they can choose the floor they’d like to travel to.
@@ -26,10 +24,12 @@ Please let me know if you have any questions.
 
 # Assumptions
 
+1) If elevator is more than 2 floors away then it's able to slow down and stop safely.
 
 # Considerations
 
-A) Safety requirements, eg: Acceleration and velocity likely have limits.
+A) Safety requirements, eg: Acceleration and velocity likely have limits. Weight and passenger limits.
+B) Wear and tear from over using one elevator. Should maybe spread the use of each elevator evenly.
 
 # Thought Process
 
@@ -40,3 +40,8 @@ D) Expand requirements to work with 2 elevators.
 E) Optimise system for better efficiency.
 
 F) Ancillary services such as health checking, logging etc
+
+
+# TODOs
+
+Replace all the thread sleep with Timer() and callback

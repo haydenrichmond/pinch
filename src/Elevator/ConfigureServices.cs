@@ -1,4 +1,5 @@
 using Elevator.Configuration;
+using Elevator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,8 @@ namespace Elevator
         {
             services.Configure<BuildingOptions>(config.GetSection(BuildingOptions.SectionName));
 
+            services.AddScoped<IElevatorManager, ElevatorManager>();
+            services.AddScoped<IElevatorDispatcherService, ElevatorDispatcherService>();
 
             return services;
         }
