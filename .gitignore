@@ -1,0 +1,8 @@
+.vs/
+Elevator.Tests/obj/
+src/Elevator/obj/
+tests/Elevator.IntegrationTests/bin/
+tests/Elevator.IntegrationTests/obj/
+tests/Elevator.Tests/bin/
+tests/Elevator.Tests/obj/
+src/Elevator/bin/

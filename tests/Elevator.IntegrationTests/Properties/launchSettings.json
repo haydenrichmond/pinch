@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Elevator.IntegrationTests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

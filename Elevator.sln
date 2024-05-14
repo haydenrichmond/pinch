@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E3A76C9-06BB-4CE5-9983-D161917E486E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{69F75401-AEF7-4B3F-8CCC-798028985AA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevator", "src\Elevator\Elevator.csproj", "{D4647FC1-BFA0-41D8-805F-1D39668112F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevator.Tests", "tests\Elevator.Tests\Elevator.Tests.csproj", "{2B1A5F37-431B-4E85-8D48-68AB130E4F11}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18F71E46-4D0A-4294-88A2-79DF83FA8FA3}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elevator.IntegrationTests", "tests\Elevator.IntegrationTests\Elevator.IntegrationTests.csproj", "{FC871039-A71A-4CE4-8DD1-9C548E19F550}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4647FC1-BFA0-41D8-805F-1D39668112F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4647FC1-BFA0-41D8-805F-1D39668112F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4647FC1-BFA0-41D8-805F-1D39668112F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4647FC1-BFA0-41D8-805F-1D39668112F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B1A5F37-431B-4E85-8D48-68AB130E4F11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B1A5F37-431B-4E85-8D48-68AB130E4F11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B1A5F37-431B-4E85-8D48-68AB130E4F11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B1A5F37-431B-4E85-8D48-68AB130E4F11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC871039-A71A-4CE4-8DD1-9C548E19F550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC871039-A71A-4CE4-8DD1-9C548E19F550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC871039-A71A-4CE4-8DD1-9C548E19F550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC871039-A71A-4CE4-8DD1-9C548E19F550}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D4647FC1-BFA0-41D8-805F-1D39668112F1} = {7E3A76C9-06BB-4CE5-9983-D161917E486E}
+		{2B1A5F37-431B-4E85-8D48-68AB130E4F11} = {69F75401-AEF7-4B3F-8CCC-798028985AA3}
+		{FC871039-A71A-4CE4-8DD1-9C548E19F550} = {69F75401-AEF7-4B3F-8CCC-798028985AA3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82CCD17B-B651-4D9A-962E-96218EADFA78}
+	EndGlobalSection
+EndGlobal
