@@ -1,4 +1,5 @@
 using Elevator.Events;
+using System.Runtime.CompilerServices;
 
 namespace Elevator.Models
 {
@@ -12,11 +13,21 @@ namespace Elevator.Models
         public int FloorNumber { get; set; }
         public Elevator Elevator { get; set; }
 
-        public event ElevatorButtonPressedEventHandler ElevatorButtonPressed;
+        public bool ButtonActive { get; set; }
 
-        public void PressButton()
+        public event EventHandler<ElevatorButtonPressedEventArgs> ElevatorButtonPressed;
+
+        public async Task PressButton()
         {
-            ElevatorButtonPressed.Invoke(this, new ElevatorButtonPressedEventArgs(this));
+            if (!ButtonActive)
+            {
+                ButtonActive = true;
+                ElevatorButtonPressed.Invoke(this, new ElevatorButtonPressedEventArgs(this));
+            }
+            else
+            {
+                Console.WriteLine("Do nothing. Button has already been pushed and not yet reached floor.");
+            }
         }
     }
 }

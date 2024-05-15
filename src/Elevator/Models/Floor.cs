@@ -12,23 +12,34 @@ namespace Elevator.Models
         public bool UpButtonPressed { get; set; }
         public bool DownButtonPressed { get; set; }
 
-        public int FloorNumber { get; set; }
+        public readonly int FloorNumber;
 
-        public event CallButtonPressedEventHandler CallButtonPressed;
+        public event Action<int, Floor> CallButtonPressed;
 
-        public void PressUpButton()
+        public async Task PressUpButton()
         {
+            if (FloorNumber >= 10) //TODO get from config
+            {
+                throw new ArgumentOutOfRangeException("Top floor is unable to go up.");
+            }
+
+
             UpButtonPressed = true;
-            CallButtonPressed.Invoke(this, new CallButtonPressedEventArgs(this));
+            CallButtonPressed.Invoke(FloorNumber, this);
         }
 
-        public void PressDownButton()
+        public async Task PressDownButton()
         {
+            if (FloorNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Ground floor is unable to go down.");
+            }
+
             DownButtonPressed = true;
-            CallButtonPressed.Invoke(this, new CallButtonPressedEventArgs(this));
+            CallButtonPressed.Invoke(FloorNumber, this);
         }
 
-        public void PassengersPickedUp()
+        public async Task PassengersPickedUp()
         {
             UpButtonPressed = false;
             DownButtonPressed = false;

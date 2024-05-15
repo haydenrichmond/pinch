@@ -1,23 +1,26 @@
 
 using Elevator.Events;
+using Elevator.Models;
 
 namespace Elevator.Services
 {
     public interface IElevatorDispatcherService
     {
-        void Dispatch(Elevator.Models.Elevator elevator, int floor);
+        void Dispatch(int floor);
     }
     public class ElevatorDispatcherService : IElevatorDispatcherService
     {
 
-        private static void Button_CallButtonPressed(object sender, CallButtonPressedEventArgs e)
+        public void Dispatch(int floorNumber)
         {
-            Console.WriteLine($"CallButtonPressed");
-        }
+            //var availableElevator = Elevators.FirstOrDefault(x => !x._moving
+            //||
+            //(x.DirectionOfTravel == DirectionOfTravel.Up && x._currentFloor < floorNumber - FloorStopBuffer)
+            //||
+            //(x.DirectionOfTravel == DirectionOfTravel.Down && x._currentFloor > floorNumber + FloorStopBuffer)
+            //);
 
-        public void Dispatch(Models.Elevator elevator, int floor)
-        {
-            throw new NotImplementedException();
+            //await availableElevator.QueueFloor(floorNumber);
         }
     }
 }

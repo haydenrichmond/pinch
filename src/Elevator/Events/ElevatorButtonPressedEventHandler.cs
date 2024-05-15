@@ -2,7 +2,7 @@ using Elevator.Models;
 
 namespace Elevator.Events
 {
-    public delegate void ElevatorButtonPressedEventHandler(object sender, ElevatorButtonPressedEventArgs e);
+    //public delegate void ElevatorButtonPressedEventHandler(object sender, ElevatorButtonPressedEventArgs e);
 
     public class ElevatorButtonPressedEventArgs : EventArgs
     {

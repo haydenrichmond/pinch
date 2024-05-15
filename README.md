@@ -25,6 +25,7 @@ Please let me know if you have any questions.
 # Assumptions
 
 1) If elevator is more than 2 floors away then it's able to slow down and stop safely.
+2) American or Australian system? Floor 1 is not Ground floor. Floor 0 is Ground Floor.
 
 # Considerations
 
@@ -44,4 +45,5 @@ F) Ancillary services such as health checking, logging etc
 
 # TODOs
 
-Replace all the thread sleep with Timer() and callback
+Replace all the thread sleep with Timer() and callback.
+Don't let max floor push up button and same for min floor down button.

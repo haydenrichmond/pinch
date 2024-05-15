@@ -9,16 +9,17 @@ namespace Elevator.Models
 
         public DoorStatus Status { get; set; }
 
-        public void Open()
+        public async Task Open()
         {
             Status = DoorStatus.Opening;
-            Thread.Sleep(_config.DoorOpenCloseTimeMilliseconds);
+            // Simulate time taken to move one floor
+            await Task.Delay(_config.DoorOpenCloseTimeMilliseconds);
             Status = DoorStatus.Open;
         }
-        public void Close()
+        public async Task Close()
         {
             Status = DoorStatus.Closing;
-            Thread.Sleep(_config.DoorOpenCloseTimeMilliseconds);
+            await Task.Delay(_config.DoorOpenCloseTimeMilliseconds);
             Status = DoorStatus.Closed;
         }
     }
