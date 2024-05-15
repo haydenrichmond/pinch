@@ -1,5 +1,4 @@
 using Elevator.Events;
-using System.Runtime.CompilerServices;
 
 namespace Elevator.Models
 {

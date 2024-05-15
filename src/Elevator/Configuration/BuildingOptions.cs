@@ -5,9 +5,11 @@ namespace Elevator.Configuration
         public const string SectionName = "Building";
 
         /// <summary>
-        /// 0 denotes one floor, Ground.
+        /// Minimum 1 required. 0 denotes one floor, Ground.
         /// </summary>
         public required int TotalFloors { get; set; }
+
+
 
         /// <summary>
         /// Minimum 1 required
@@ -18,5 +20,7 @@ namespace Elevator.Configuration
         public required int TimeToTravelBetweenFloorsMilliseconds { get; set; }
 
         public required int PassengerLoadUnloadTimeMilliseconds { get; set; }
+
+        public required int FloorStopBuffer { get; set; }
     }
 }

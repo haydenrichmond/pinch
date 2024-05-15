@@ -1,5 +1,4 @@
 using Elevator.Configuration;
-using Elevator.Events;
 using Microsoft.Extensions.Options;
 
 namespace Elevator.Models
@@ -13,59 +12,35 @@ namespace Elevator.Models
             Buttons = buttons;
         }
 
-
-        public bool _moving = false;
-        //private List<int> _targetFloors = new();
-
-
+        private object _lockObj = new object();
         private List<int> _upDirectionFloors = new();
         private List<int> _downDirectionFloors = new();
 
         public Button[] Buttons { get; set; }
-
         public int IdNumber { get; set; }
-
-
-        //TODO
         public Door Door { get; set; }
-
-
-
-        public int MaxFloor => _config.TotalFloors;
-        public int MinFloor => 0;
-
         /// <summary>
         /// 0 denotes floor G
         /// </summary>
-        public int _currentFloor { get; set; }
+        public int CurrentFloor { get; set; }
 
-
-
-        private object lockObj = new object();
-
-
+        /// <summary>
+        /// Null denotes no motion.
+        /// </summary>
         public DirectionOfTravel? DirectionOfTravel { get; set; }
+        public bool Moving = false; // Can derive from DirectionOfTravel
 
-
-
-        //public event EventHandler<MoveToTargetFloorEventArgs> MoveToTargetFloor;
         public event Action<int> FloorChanged;
 
         public async Task QueueFloor(int targetFloor, bool? upButtonPressed)
         {
-            lock (lockObj)
+            lock (_lockObj)
             {
-                //if (_upDirectionFloors.Contains(targetFloor))
-                //{
-                //    // No need to queue
-                //    return;
-                //}
-
                 if (DirectionOfTravel == null)
                 {
                     if (upButtonPressed == null)
                     {
-                        if (targetFloor > _currentFloor)
+                        if (targetFloor > CurrentFloor)
                         {
                             _upDirectionFloors.Add(targetFloor);
                         }
@@ -89,8 +64,6 @@ namespace Elevator.Models
                 }
                 else
                 {
-
-                    // Attempt 2
                     // Same code block repeated
                     if (upButtonPressed == null)
                     {
@@ -116,56 +89,6 @@ namespace Elevator.Models
                             _downDirectionFloors.Add(targetFloor);
                         }
                     }
-
-
-
-                    //Attempt 1
-                    //// Scan search, go to most extreme floor then reverse direction
-
-                    //var maxTargetFloor = _targetFloors.Max();
-                    //var maxNumberIndex = _targetFloors.FindIndex(x => x == maxTargetFloor);
-
-                    ////TODO Optimise for better performance
-                    //// Split the list into two parts
-                    //List<int> upSequence = _targetFloors.Skip(maxNumberIndex).ToList();
-                    //List<int> downSequence = _targetFloors.Take(maxNumberIndex + 1).Reverse().ToList();
-
-                    //if (upButtonPressed == null)
-                    //{
-                    //    if (targetFloor > _currentFloor)
-                    //    {
-                    //        upSequence.Add(targetFloor);
-                    //    }
-                    //    else if (targetFloor < _currentFloor)
-                    //    {
-                    //        downSequence.Add(targetFloor);
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    if (upButtonPressed == true)
-                    //    {
-                    //        upSequence.Add(targetFloor);
-                    //    }
-                    //    else
-                    //    {
-                    //        downSequence.Add(targetFloor);
-                    //    }
-                    //}
-
-                    //upSequence.Sort();
-                    //downSequence.Sort();
-                    //downSequence.Reverse();
-                    //if (DirectionOfTravel == Models.DirectionOfTravel.Up)
-                    //{
-                    //    upSequence.AddRange(downSequence);
-                    //    _targetFloors = upSequence.Distinct().ToList();
-                    //}
-                    //else if (DirectionOfTravel == Models.DirectionOfTravel.Down)
-                    //{
-                    //    downSequence.AddRange(upSequence);
-                    //    _targetFloors = downSequence.Distinct().ToList();
-                    //}
                 }
 
                 _upDirectionFloors.Sort();
@@ -178,24 +101,24 @@ namespace Elevator.Models
         public async Task ProcessRequests()
         {
             Console.WriteLine("Attempted to process requests...");
-            if (_moving)
+            if (Moving)
             {
                 Console.WriteLine("Elevator already moving so ignore...");
                 return;
             }
 
             Console.WriteLine("Elevator has been woken up...");
-            _moving = true;
+            Moving = true;
 
             while (true)
             {
                 int nextFloor;
-                lock (lockObj)
+                lock (_lockObj)
                 {
                     if (_upDirectionFloors.Count == 0 && _downDirectionFloors.Count == 0)
                     {
                         DirectionOfTravel = null;
-                        _moving = false;
+                        Moving = false;
                         return;
                     }
 
@@ -217,23 +140,23 @@ namespace Elevator.Models
 
         private async Task MoveToFloor(int floor)
         {
-            while (_currentFloor != floor)
+            while (CurrentFloor != floor)
             {
-                if (_currentFloor < floor)
+                if (CurrentFloor < floor)
                 {
                     DirectionOfTravel = Models.DirectionOfTravel.Up;
-                    _currentFloor++;
+                    CurrentFloor++;
 
                 }
 
-                else if (_currentFloor > floor)
+                else if (CurrentFloor > floor)
                 {
                     DirectionOfTravel = Models.DirectionOfTravel.Down;
-                    _currentFloor--;
+                    CurrentFloor--;
                 }
 
 
-                FloorChanged.Invoke(_currentFloor);
+                FloorChanged.Invoke(CurrentFloor);
 
                 // Simulate time taken to move one floor
                 await Task.Delay(_config.TimeToTravelBetweenFloorsMilliseconds);
@@ -247,61 +170,6 @@ namespace Elevator.Models
             Console.WriteLine("GO!");
 
         }
-
-        //public async Task MoveToTargetFloorMethod(int targetFloor)
-        //{
-        //    MoveToTargetFloor.Invoke(this, new MoveToTargetFloorEventArgs(this, targetFloor));
-        //}
-
-        //public void MoveToTargetFloor(int targetFloor)
-        //{
-        //    if (targetFloor > MaxFloor || targetFloor < MinFloor)
-        //    {
-        //        throw new ArgumentOutOfRangeException(nameof(targetFloor), targetFloor.ToString());
-        //    }
-
-
-        //    if (CurrentFloor == targetFloor)
-        //    {
-        //        return;
-        //    }
-
-        //    TargetFloor = targetFloor;
-        //    Status = ElevatorStatus.Moving;
-        //    var moveUp = CurrentFloor < targetFloor;
-
-        //    if (moveUp)
-        //    {
-        //        Console.WriteLine($"Elevator moving up to floor {targetFloor}.");
-        //        DirectionOfTravel = Models.DirectionOfTravel.Up;
-
-        //        while (CurrentFloor < targetFloor)
-        //        {
-        //            Console.WriteLine($"Elevator on floor {CurrentFloor}.");
-        //            Thread.Sleep(_config.TimeToTravelBetweenFloorsMilliseconds);
-        //            CurrentFloor++;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine($"Elevator moving down to floor {targetFloor}.");
-        //        DirectionOfTravel = Models.DirectionOfTravel.Down;
-        //        while (CurrentFloor > targetFloor)
-        //        {
-        //            Console.WriteLine($"Elevator on floor {CurrentFloor}.");
-        //            Thread.Sleep(_config.TimeToTravelBetweenFloorsMilliseconds);
-        //            CurrentFloor--;
-        //        }
-        //    }
-
-        //    Buttons[targetFloor].ButtonActive = false;
-        //    CurrentFloor = targetFloor;
-        //    TargetFloor = null;
-        //    Status = ElevatorStatus.Idle;
-        //    DirectionOfTravel = null;
-        //    Console.WriteLine($"Elevator on floor {CurrentFloor}.");
-        //}
-
     }
 
     public enum DirectionOfTravel

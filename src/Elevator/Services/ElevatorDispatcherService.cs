@@ -1,26 +1,36 @@
-
-using Elevator.Events;
+using Elevator.Configuration;
 using Elevator.Models;
+using Microsoft.Extensions.Options;
 
 namespace Elevator.Services
 {
     public interface IElevatorDispatcherService
     {
-        void Dispatch(int floor);
+        Task<Models.Elevator> Dispatch(Models.Elevator[] elevators, int floorNumber, bool upButtonPressed);
     }
     public class ElevatorDispatcherService : IElevatorDispatcherService
     {
-
-        public void Dispatch(int floorNumber)
+        private readonly BuildingOptions _options;
+        public ElevatorDispatcherService(IOptions<BuildingOptions> options)
         {
-            //var availableElevator = Elevators.FirstOrDefault(x => !x._moving
-            //||
-            //(x.DirectionOfTravel == DirectionOfTravel.Up && x._currentFloor < floorNumber - FloorStopBuffer)
-            //||
-            //(x.DirectionOfTravel == DirectionOfTravel.Down && x._currentFloor > floorNumber + FloorStopBuffer)
-            //);
+            _options = options.Value;
+        }
 
-            //await availableElevator.QueueFloor(floorNumber);
+        public async Task<Models.Elevator> Dispatch(Models.Elevator[] elevators, int floorNumber, bool upButtonPressed)
+        {
+            var availableElevator = elevators.
+                OrderBy(x => x.Moving) // Idle elevators first
+                .ThenBy(x =>
+                (x.DirectionOfTravel == DirectionOfTravel.Up && x.CurrentFloor < floorNumber - _options.FloorStopBuffer)
+                ||
+                (x.DirectionOfTravel == DirectionOfTravel.Down && x.CurrentFloor > floorNumber + _options.FloorStopBuffer)
+                )
+                .ThenBy(x => x.IdNumber)
+            .First();
+
+            await availableElevator.QueueFloor(floorNumber, upButtonPressed);
+
+            return availableElevator;
         }
     }
 }
