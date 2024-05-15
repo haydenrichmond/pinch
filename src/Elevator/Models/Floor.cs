@@ -1,5 +1,3 @@
-using Elevator.Events;
-
 namespace Elevator.Models
 {
     public class Floor

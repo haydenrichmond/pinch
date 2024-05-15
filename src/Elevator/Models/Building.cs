@@ -1,7 +1,6 @@
 using Elevator.Configuration;
 using Elevator.Events;
 using Microsoft.Extensions.Options;
-using System.Drawing;
 
 namespace Elevator.Models
 {
@@ -31,14 +30,26 @@ namespace Elevator.Models
                     buttons.Add(button);
                 }
 
-                var elevator = new Elevator(config, buttons.ToArray());
+                var elevator = new Elevator(config, buttons.ToArray()) { IdNumber = i };
                 foreach (var b in buttons)
                 {
                     b.Elevator = elevator;
                 }
-                elevator.FloorChanged += (floor) => Console.WriteLine($"Elevator is now at floor {floor}");
+                elevator.FloorChanged += async (floor) =>
+                {
+                    Console.WriteLine($"Elevator is now at floor {floor}");
+                };
 
-                //elevator.MoveToTargetFloor += async (sender, e) => await MoveToTargetFloor(sender, e); 
+                //elevator.ArrivedAtFloor += async (floor) => {
+                //    Console.WriteLine($"Arrived at floor {floor}. Trigger opening doors");
+                //    await elevator.Door.Open();
+                //    Console.WriteLine("Passengers boarding");
+                //    await Task.Delay(1000);
+                //    await elevator.Door.Close();
+                //    Console.WriteLine("GO!");
+                //};
+
+                elevator.Door = new Door(config);
 
                 Elevators[i] = elevator;
             }
@@ -58,13 +69,21 @@ namespace Elevator.Models
 
             // TODO select an elevator using more advanced logic.
             // TODO refactor logic into dispatcher service.
-            //var availableElevator = Elevators.FirstOrDefault(x => !x._moving
-            //||
-            //(x.DirectionOfTravel == DirectionOfTravel.Up && x._currentFloor < floorNumber - FloorStopBuffer)
-            //||
-            //(x.DirectionOfTravel == DirectionOfTravel.Down && x._currentFloor > floorNumber + FloorStopBuffer)
-            //);
-            var availableElevator = Elevators.First();
+            var availableElevator = Elevators.
+                OrderByDescending(x => x._moving)
+                .ThenBy(x =>
+                (x.DirectionOfTravel == DirectionOfTravel.Up && x._currentFloor < floorNumber - FloorStopBuffer)
+                ||
+                (x.DirectionOfTravel == DirectionOfTravel.Down && x._currentFloor > floorNumber + FloorStopBuffer)
+                )
+                .ThenBy(x => x.IdNumber)
+                .First();
+
+
+            //Elevators ordered by
+            //1) idle
+            //2) moving in the direction of the floor
+            //3 whatever left over
             await availableElevator.QueueFloor(floorNumber, floor.UpButtonPressed);
         }
 

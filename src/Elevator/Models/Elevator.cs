@@ -15,11 +15,15 @@ namespace Elevator.Models
 
 
         public bool _moving = false;
-        private List<int> _targetFloors = new();
+        //private List<int> _targetFloors = new();
+
+
+        private List<int> _upDirectionFloors = new();
+        private List<int> _downDirectionFloors = new();
 
         public Button[] Buttons { get; set; }
 
-
+        public int IdNumber { get; set; }
 
 
         //TODO
@@ -51,65 +55,122 @@ namespace Elevator.Models
         {
             lock (lockObj)
             {
-                if (_targetFloors.Contains(targetFloor))
+                //if (_upDirectionFloors.Contains(targetFloor))
+                //{
+                //    // No need to queue
+                //    return;
+                //}
+
+                if (DirectionOfTravel == null)
                 {
-                    // No need to queue
-                    return;
-                }
-
-                if (DirectionOfTravel == null || _targetFloors.Count < 2)
-                {
-                    _targetFloors.Add(targetFloor);
-                }
-                else
-                {
-                    // Scan search, go to most extreme floor then reverse direction
-
-                    var maxTargetFloor = _targetFloors.Max();
-                    var maxNumberIndex = _targetFloors.FindIndex(x => x == maxTargetFloor);
-
-                    //TODO Optimise for better performance
-                    // Split the list into two parts
-                    List<int> upSequence = _targetFloors.Skip(maxNumberIndex).ToList();
-                    List<int> downSequence = _targetFloors.Take(maxNumberIndex + 1).Reverse().ToList();
-
                     if (upButtonPressed == null)
                     {
                         if (targetFloor > _currentFloor)
                         {
-                            upSequence.Add(targetFloor);
+                            _upDirectionFloors.Add(targetFloor);
                         }
-                        else if (targetFloor < _currentFloor)
+                        else
                         {
-                            downSequence.Add(targetFloor);
+                            _downDirectionFloors.Add(targetFloor);
                         }
                     }
                     else
                     {
+
                         if (upButtonPressed == true)
                         {
-                            upSequence.Add(targetFloor);
+                            _upDirectionFloors.Add(targetFloor);
                         }
                         else
                         {
-                            downSequence.Add(targetFloor);
+                            _downDirectionFloors.Add(targetFloor);
+                        }
+                    }
+                }
+                else
+                {
+
+                    // Attempt 2
+                    // Same code block repeated
+                    if (upButtonPressed == null)
+                    {
+                        // use the direction of travel to determine where to send it??
+                        if (DirectionOfTravel == Models.DirectionOfTravel.Up)
+                        {
+                            _upDirectionFloors.Add(targetFloor);
+                        }
+                        else
+                        {
+                            _downDirectionFloors.Add(targetFloor);
+                        }
+                    }
+                    else
+                    {
+                        // always do whatever the requested direction was
+                        if (upButtonPressed == true)
+                        {
+                            _upDirectionFloors.Add(targetFloor);
+                        }
+                        else
+                        {
+                            _downDirectionFloors.Add(targetFloor);
                         }
                     }
 
-                    upSequence.Sort();
-                    downSequence.Sort();
-                    downSequence.Reverse();
-                    if (DirectionOfTravel == Models.DirectionOfTravel.Up)
-                    {
-                        upSequence.AddRange(downSequence);
-                        _targetFloors = upSequence.Distinct().ToList();
-                    }
-                    else if (DirectionOfTravel == Models.DirectionOfTravel.Down)
-                    {
-                        downSequence.AddRange(upSequence);
-                        _targetFloors = downSequence.Distinct().ToList();
-                    }
+
+
+                    //Attempt 1
+                    //// Scan search, go to most extreme floor then reverse direction
+
+                    //var maxTargetFloor = _targetFloors.Max();
+                    //var maxNumberIndex = _targetFloors.FindIndex(x => x == maxTargetFloor);
+
+                    ////TODO Optimise for better performance
+                    //// Split the list into two parts
+                    //List<int> upSequence = _targetFloors.Skip(maxNumberIndex).ToList();
+                    //List<int> downSequence = _targetFloors.Take(maxNumberIndex + 1).Reverse().ToList();
+
+                    //if (upButtonPressed == null)
+                    //{
+                    //    if (targetFloor > _currentFloor)
+                    //    {
+                    //        upSequence.Add(targetFloor);
+                    //    }
+                    //    else if (targetFloor < _currentFloor)
+                    //    {
+                    //        downSequence.Add(targetFloor);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (upButtonPressed == true)
+                    //    {
+                    //        upSequence.Add(targetFloor);
+                    //    }
+                    //    else
+                    //    {
+                    //        downSequence.Add(targetFloor);
+                    //    }
+                    //}
+
+                    //upSequence.Sort();
+                    //downSequence.Sort();
+                    //downSequence.Reverse();
+                    //if (DirectionOfTravel == Models.DirectionOfTravel.Up)
+                    //{
+                    //    upSequence.AddRange(downSequence);
+                    //    _targetFloors = upSequence.Distinct().ToList();
+                    //}
+                    //else if (DirectionOfTravel == Models.DirectionOfTravel.Down)
+                    //{
+                    //    downSequence.AddRange(upSequence);
+                    //    _targetFloors = downSequence.Distinct().ToList();
+                    //}
                 }
+
+                _upDirectionFloors.Sort();
+                _downDirectionFloors.Sort();
+                _downDirectionFloors.Reverse();
             }
             await ProcessRequests();
         }
@@ -131,14 +192,23 @@ namespace Elevator.Models
                 int nextFloor;
                 lock (lockObj)
                 {
-                    if (_targetFloors.Count == 0)
+                    if (_upDirectionFloors.Count == 0 && _downDirectionFloors.Count == 0)
                     {
                         DirectionOfTravel = null;
                         _moving = false;
                         return;
                     }
-                    nextFloor = _targetFloors.First();
-                    _targetFloors.Remove(nextFloor);
+
+                    if ((DirectionOfTravel == Models.DirectionOfTravel.Up || DirectionOfTravel == null) && _upDirectionFloors.Count != 0)
+                    {
+                        nextFloor = _upDirectionFloors.First();
+                        _upDirectionFloors.Remove(nextFloor);
+                    }
+                    else
+                    {
+                        nextFloor = _downDirectionFloors.First();
+                        _downDirectionFloors.Remove(nextFloor);
+                    }
                 }
 
                 await MoveToFloor(nextFloor);
@@ -169,7 +239,13 @@ namespace Elevator.Models
                 await Task.Delay(_config.TimeToTravelBetweenFloorsMilliseconds);
             }
 
-            Console.WriteLine($"Arrived at floor {_currentFloor}. Trigger opening doors");
+            Console.WriteLine($"Arrived at floor {floor}. Trigger opening doors");
+            await Door.Open();
+            Console.WriteLine("Passengers boarding");
+            await Task.Delay(_config.PassengerLoadUnloadTimeMilliseconds);
+            await Door.Close();
+            Console.WriteLine("GO!");
+
         }
 
         //public async Task MoveToTargetFloorMethod(int targetFloor)

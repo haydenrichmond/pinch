@@ -11,6 +11,7 @@ namespace Elevator.Models
 
         public async Task Open()
         {
+            Console.WriteLine("Doors opening...");
             Status = DoorStatus.Opening;
             // Simulate time taken to move one floor
             await Task.Delay(_config.DoorOpenCloseTimeMilliseconds);
@@ -18,6 +19,7 @@ namespace Elevator.Models
         }
         public async Task Close()
         {
+            Console.WriteLine("Doors closing...");
             Status = DoorStatus.Closing;
             await Task.Delay(_config.DoorOpenCloseTimeMilliseconds);
             Status = DoorStatus.Closed;

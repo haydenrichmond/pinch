@@ -45,5 +45,4 @@ F) Ancillary services such as health checking, logging etc
 
 # TODOs
 
-Replace all the thread sleep with Timer() and callback.
-Don't let max floor push up button and same for min floor down button.
+Support for multiple elevators
